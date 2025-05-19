@@ -1,19 +1,34 @@
+# k8s/deployment.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: node-k8s-app
+  name: node-app
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: node-k8s-app
+      app: node
   template:
     metadata:
       labels:
-        app: node-k8s-app
+        app: node
     spec:
       containers:
-      - name: node-k8s-app
-        image: node-k8s-app
-        ports:
-        - containerPort: 3000
+        - name: node
+          image: node-k8s-app:latest
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 3000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: node-service
+spec:
+  type: NodePort
+  selector:
+    app: node
+  ports:
+    - port: 3000
+      targetPort: 3000
+      nodePort: 30036

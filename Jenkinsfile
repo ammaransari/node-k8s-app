@@ -1,27 +1,28 @@
 pipeline {
-  agent any
+    agent any
 
-  environment {
-    IMAGE_NAME = "node-k8s-app"
-  }
-
-  stages {
-    stage('Build Docker Image') {
-      steps {
-        sh 'docker build -t $IMAGE_NAME .'
-      }
+    environment {
+        IMAGE_NAME = 'node-k8s-app:latest'
     }
 
-    stage('Load image to Minikube') {
-      steps {
-        sh 'minikube image load $IMAGE_NAME'
-      }
-    }
+    stages {
+        stage('Checkout') {
+            steps {
+                git 'https://github.com/YOUR_USERNAME/YOUR_REPO.git'
+            }
+        }
 
-    stage('Deploy to Kubernetes') {
-      steps {
-        sh 'kubectl apply -f k8s/'
-      }
+        stage('Build Docker Image') {
+            steps {
+                sh 'eval $(minikube docker-env) && docker build -t $IMAGE_NAME .'
+            }
+        }
+
+        stage('Deploy to Kubernetes') {
+            steps {
+                sh 'kubectl delete -f k8s/ || true'
+                sh 'kubectl apply -f k8s/'
+            }
+        }
     }
-  }
 }
