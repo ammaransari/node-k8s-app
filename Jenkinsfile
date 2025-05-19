@@ -7,10 +7,12 @@ pipeline {
 
     stages {
         stage('Checkout') {
-            steps {
-                git credentialsId: 'github-token', url: 'https://github.com/ammaransari/node-k8s-app.git'
-            }
-        }
+  steps {
+    git url: 'https://github.com/ammaransari/node-k8s-app.git',
+        branch: 'main',
+        credentialsId: 'github-token'
+  }
+}
 
         stage('Build Docker Image') {
             steps {
