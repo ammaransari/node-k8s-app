@@ -4,14 +4,15 @@ services:
   jenkins:
     image: jenkins/jenkins:lts
     container_name: jenkins
-    privileged: true  # Required for Docker in Docker (DinD)
-    user: root        # Needed to install Docker CLI
+    user: root  # So Jenkins can access Docker socket
     ports:
       - "8080:8080"
       - "50000:50000"
     volumes:
       - jenkins_home:/var/jenkins_home
-      - /var/run/docker.sock:/var/run/docker.sock  # Mount host Docker daemon
+      - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      DOCKER_HOST: unix:///var/run/docker.sock
 
 volumes:
-  jenkins_home:
+  jenkins_home:  # 👈 This defines the volume referred to above
